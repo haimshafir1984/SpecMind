@@ -1,0 +1,477 @@
+{
+  "templates": [
+    {
+      "id": "ecommerce",
+      "name": "פלטפורמת E-Commerce",
+      "domain": "Retail",
+      "description": "מערכת קניות אונליין עם ניהול מוצרים, עגלה, הזמנות ותשלומים",
+      "entities": [
+        {
+          "id": "ent_product",
+          "name": "מוצר",
+          "fields": [
+            {"name": "title", "type": "string", "required": true, "description": "שם המוצר"},
+            {"name": "price", "type": "number", "required": true, "description": "מחיר"},
+            {"name": "stock", "type": "number", "required": true, "description": "כמות במלאי"},
+            {"name": "category", "type": "enum", "required": false, "description": "קטגוריה"},
+            {"name": "images", "type": "string", "required": false, "description": "כתובות URL של תמונות"}
+          ]
+        },
+        {
+          "id": "ent_customer",
+          "name": "לקוח",
+          "fields": [
+            {"name": "name", "type": "string", "required": true, "description": "שם מלא"},
+            {"name": "email", "type": "string", "required": true, "description": "כתובת אימייל"},
+            {"name": "phone", "type": "string", "required": false, "description": "טלפון"},
+            {"name": "address", "type": "string", "required": false, "description": "כתובת למשלוח"}
+          ]
+        },
+        {
+          "id": "ent_order",
+          "name": "הזמנה",
+          "fields": [
+            {"name": "order_number", "type": "string", "required": true, "description": "מספר הזמנה"},
+            {"name": "status", "type": "enum", "required": true, "description": "ממתין / בטיפול / נשלח / הושלם"},
+            {"name": "total", "type": "number", "required": true, "description": "סכום כולל"},
+            {"name": "items", "type": "string", "required": true, "description": "פריטים שהוזמנו"},
+            {"name": "created_at", "type": "date", "required": true, "description": "תאריך יצירה"}
+          ]
+        },
+        {
+          "id": "ent_cart",
+          "name": "עגלת קניות",
+          "fields": [
+            {"name": "items", "type": "string", "required": true, "description": "פריטים בעגלה"},
+            {"name": "total", "type": "number", "required": true, "description": "סכום זמני"}
+          ]
+        }
+      ],
+      "workflows": [
+        {
+          "id": "wf_checkout",
+          "name": "תהליך רכישה",
+          "steps": [
+            "לקוח מוסיף מוצרים לעגלה",
+            "לקוח עובר לתשלום",
+            "לקוח ממלא פרטי משלוח ותשלום",
+            "המערכת מאמתת את הפרטים",
+            "תשלום מעובד",
+            "הזמנה נוצרת ואישור נשלח במייל",
+            "מלאי מתעדכן"
+          ],
+          "constraints": [
+            "מוצר חייב להיות במלאי",
+            "תשלום חייב להתאשר לפני יצירת הזמנה",
+            "לקוח חייב להיות מחובר או לבצע רכישה כאורח"
+          ]
+        },
+        {
+          "id": "wf_inventory",
+          "name": "ניהול מלאי",
+          "steps": [
+            "מנהל מוסיף מוצר חדש",
+            "מנהל מעדכן כמות במלאי",
+            "מערכת שולחת התראה כשמלאי מתחת לסף מינימום",
+            "מנהל מבצע הזמנה מספק"
+          ],
+          "constraints": [
+            "מלאי שלילי אינו מאפשר מכירה",
+            "עדכון מלאי נרשם ב-audit log"
+          ]
+        }
+      ],
+      "spec_document": {
+        "sections": [
+          {
+            "id": "section_overview",
+            "title": "סקירה כללית",
+            "content": "פלטפורמת מסחר אלקטרוני המאפשרת ניהול מוצרים, קטלוג, רכישות ומשלוחים.\n- ניהול קטלוג מוצרים\n- עגלת קניות ותשלום\n- ניהול הזמנות ומלאי\n- פורטל לקוחות"
+          },
+          {
+            "id": "section_roles",
+            "title": "תפקידים ומשתמשים",
+            "content": "- **מנהל חנות**: ניהול מוצרים, מלאי, הזמנות, דשבורד\n- **לקוח**: גלישה, הוספה לעגלה, רכישה, מעקב הזמנות\n- **מחסנאי**: עדכון מלאי, אישור משלוחים"
+          }
+        ]
+      }
+    },
+    {
+      "id": "saas",
+      "name": "פלטפורמת SaaS",
+      "domain": "FinTech",
+      "description": "מנגנון מנויים, חיוב אוטומטי, ניהול ארגונים ומשתמשים",
+      "entities": [
+        {
+          "id": "ent_org",
+          "name": "ארגון",
+          "fields": [
+            {"name": "name", "type": "string", "required": true, "description": "שם הארגון"},
+            {"name": "plan", "type": "enum", "required": true, "description": "Basic / Pro / Enterprise"},
+            {"name": "status", "type": "enum", "required": true, "description": "פעיל / מוקפא / בוטל"},
+            {"name": "billing_email", "type": "string", "required": true, "description": "אימייל לחיוב"}
+          ]
+        },
+        {
+          "id": "ent_user",
+          "name": "משתמש",
+          "fields": [
+            {"name": "name", "type": "string", "required": true, "description": "שם מלא"},
+            {"name": "email", "type": "string", "required": true, "description": "אימייל"},
+            {"name": "role", "type": "enum", "required": true, "description": "Admin / Member / Viewer"},
+            {"name": "org_id", "type": "string", "required": true, "description": "מזהה ארגון"}
+          ]
+        },
+        {
+          "id": "ent_subscription",
+          "name": "מנוי",
+          "fields": [
+            {"name": "plan_id", "type": "string", "required": true, "description": "מזהה תכנית"},
+            {"name": "start_date", "type": "date", "required": true, "description": "תאריך התחלה"},
+            {"name": "renewal_date", "type": "date", "required": true, "description": "תאריך חידוש"},
+            {"name": "seats", "type": "number", "required": true, "description": "מספר מושבים"},
+            {"name": "price", "type": "number", "required": true, "description": "מחיר חודשי"}
+          ]
+        },
+        {
+          "id": "ent_invoice",
+          "name": "חשבונית",
+          "fields": [
+            {"name": "invoice_number", "type": "string", "required": true, "description": "מספר חשבונית"},
+            {"name": "amount", "type": "number", "required": true, "description": "סכום"},
+            {"name": "status", "type": "enum", "required": true, "description": "שולם / ממתין / בוטל"},
+            {"name": "due_date", "type": "date", "required": true, "description": "תאריך לתשלום"}
+          ]
+        }
+      ],
+      "workflows": [
+        {
+          "id": "wf_onboarding",
+          "name": "הרשמה ואקטיבציה",
+          "steps": [
+            "מנהל ארגון נרשם ומאמת אימייל",
+            "בחירת תכנית מחיר",
+            "הגדרת פרטי תשלום",
+            "יצירת ארגון וחשבון ראשוני",
+            "הזמנת חברי צוות",
+            "אקטיבציה ופתיחת trial period"
+          ],
+          "constraints": [
+            "אימות אימייל חובה לפני גישה",
+            "Trial של 14 יום ללא כרטיס אשראי",
+            "מנהל ראשון מקבל הרשאות Admin"
+          ]
+        },
+        {
+          "id": "wf_billing",
+          "name": "חיוב וחידוש מנוי",
+          "steps": [
+            "מנוי מתקרב לתאריך חידוש",
+            "מערכת שולחת תזכורת 7 ימים מראש",
+            "חיוב אוטומטי בתאריך החידוש",
+            "חשבונית נשלחת במייל",
+            "במקרה כישלון: grace period של 3 ימים"
+          ],
+          "constraints": [
+            "ביטול 24 שעות לפני חידוש ללא חיוב",
+            "שדרוג לאחור אפשרי רק בסוף תקופת חיוב"
+          ]
+        }
+      ],
+      "spec_document": {
+        "sections": [
+          {
+            "id": "section_overview",
+            "title": "סקירה כללית",
+            "content": "פלטפורמת SaaS רב-שוכרת עם ניהול מנויים, חיוב אוטומטי וניהול צוותים.\n- ניהול ארגונים רב-שוכרים\n- חיוב חודשי/שנתי אוטומטי\n- ניהול תפקידים והרשאות\n- אנליטיקס ושימוש"
+          },
+          {
+            "id": "section_roles",
+            "title": "תפקידים ומשתמשים",
+            "content": "- **Admin**: ניהול ארגון, משתמשים, חיוב\n- **Member**: גישה לפיצ'רים לפי תכנית\n- **Viewer**: צפייה בלבד"
+          }
+        ]
+      }
+    },
+    {
+      "id": "healthcare",
+      "name": "ניהול מטופלים",
+      "domain": "Healthcare",
+      "description": "ניהול מטופלים, תורים, תיקים רפואיים ומרשמים",
+      "entities": [
+        {
+          "id": "ent_patient",
+          "name": "מטופל",
+          "fields": [
+            {"name": "id_number", "type": "string", "required": true, "description": "תעודת זהות"},
+            {"name": "name", "type": "string", "required": true, "description": "שם מלא"},
+            {"name": "dob", "type": "date", "required": true, "description": "תאריך לידה"},
+            {"name": "phone", "type": "string", "required": true, "description": "טלפון"},
+            {"name": "insurance_id", "type": "string", "required": false, "description": "מספר ביטוח"}
+          ]
+        },
+        {
+          "id": "ent_doctor",
+          "name": "רופא",
+          "fields": [
+            {"name": "name", "type": "string", "required": true, "description": "שם מלא"},
+            {"name": "specialty", "type": "string", "required": true, "description": "התמחות"},
+            {"name": "license_number", "type": "string", "required": true, "description": "מספר רישיון"}
+          ]
+        },
+        {
+          "id": "ent_appointment",
+          "name": "תור",
+          "fields": [
+            {"name": "date_time", "type": "date", "required": true, "description": "תאריך ושעה"},
+            {"name": "doctor_id", "type": "string", "required": true, "description": "מזהה רופא"},
+            {"name": "patient_id", "type": "string", "required": true, "description": "מזהה מטופל"},
+            {"name": "status", "type": "enum", "required": true, "description": "ממתין / אושר / בוצע / בוטל"},
+            {"name": "notes", "type": "string", "required": false, "description": "הערות"}
+          ]
+        },
+        {
+          "id": "ent_medical_record",
+          "name": "תיק רפואי",
+          "fields": [
+            {"name": "patient_id", "type": "string", "required": true, "description": "מזהה מטופל"},
+            {"name": "diagnosis", "type": "string", "required": false, "description": "אבחנה"},
+            {"name": "medications", "type": "string", "required": false, "description": "תרופות"},
+            {"name": "allergies", "type": "string", "required": false, "description": "אלרגיות"},
+            {"name": "last_updated", "type": "date", "required": true, "description": "עדכון אחרון"}
+          ]
+        }
+      ],
+      "workflows": [
+        {
+          "id": "wf_appointment",
+          "name": "קביעת תור",
+          "steps": [
+            "מטופל בוחר רופא ומתמחות",
+            "מטופל בוחר תאריך ושעה פנויה",
+            "אישור ב-SMS/מייל",
+            "תזכורת 24 שעות לפני",
+            "ביצוע הביקור",
+            "עדכון תיק רפואי"
+          ],
+          "constraints": [
+            "ביטול אפשרי עד 2 שעות לפני",
+            "לא ניתן לקבוע שני תורים לאותו זמן"
+          ]
+        },
+        {
+          "id": "wf_prescription",
+          "name": "הנפקת מרשם",
+          "steps": [
+            "רופא פותח תיק מטופל",
+            "בחירת תרופה ומינון",
+            "בדיקת אינטראקציות",
+            "חתימה דיגיטלית",
+            "שליחה לבית מרקחת"
+          ],
+          "constraints": [
+            "מרשם לתרופות מבוקרות דורש אימות כפול",
+            "תוקף מרשם: 30 יום"
+          ]
+        }
+      ],
+      "spec_document": {
+        "sections": [
+          {
+            "id": "section_overview",
+            "title": "סקירה כללית",
+            "content": "מערכת לניהול מרפאה — תורים, תיקים רפואיים, מרשמים וחיוב.\n- ניהול מטופלים ותורים\n- תיקים רפואיים דיגיטליים\n- מרשמים אלקטרוניים\n- ניהול כוח אדם רפואי"
+          }
+        ]
+      }
+    },
+    {
+      "id": "hrm",
+      "name": "ניהול משאבי אנוש",
+      "domain": "HR",
+      "description": "ניהול עובדים, גיוס, הערכות ביצועים וחופשות",
+      "entities": [
+        {
+          "id": "ent_employee",
+          "name": "עובד",
+          "fields": [
+            {"name": "employee_id", "type": "string", "required": true, "description": "מספר עובד"},
+            {"name": "name", "type": "string", "required": true, "description": "שם מלא"},
+            {"name": "role", "type": "string", "required": true, "description": "תפקיד"},
+            {"name": "department", "type": "string", "required": true, "description": "מחלקה"},
+            {"name": "start_date", "type": "date", "required": true, "description": "תאריך תחילת עבודה"},
+            {"name": "salary", "type": "number", "required": true, "description": "שכר"},
+            {"name": "status", "type": "enum", "required": true, "description": "פעיל / חופשה / סיים"}
+          ]
+        },
+        {
+          "id": "ent_position",
+          "name": "משרה",
+          "fields": [
+            {"name": "title", "type": "string", "required": true, "description": "כותרת המשרה"},
+            {"name": "department", "type": "string", "required": true, "description": "מחלקה"},
+            {"name": "requirements", "type": "string", "required": false, "description": "דרישות"},
+            {"name": "status", "type": "enum", "required": true, "description": "פתוחה / סגורה / הוקפאה"}
+          ]
+        },
+        {
+          "id": "ent_leave",
+          "name": "בקשת חופשה",
+          "fields": [
+            {"name": "employee_id", "type": "string", "required": true, "description": "מזהה עובד"},
+            {"name": "type", "type": "enum", "required": true, "description": "חופשה שנתית / מחלה / אבל"},
+            {"name": "start_date", "type": "date", "required": true, "description": "מתאריך"},
+            {"name": "end_date", "type": "date", "required": true, "description": "עד תאריך"},
+            {"name": "status", "type": "enum", "required": true, "description": "ממתין / אושר / נדחה"}
+          ]
+        },
+        {
+          "id": "ent_performance",
+          "name": "הערכת ביצועים",
+          "fields": [
+            {"name": "employee_id", "type": "string", "required": true, "description": "מזהה עובד"},
+            {"name": "period", "type": "string", "required": true, "description": "תקופה (Q1 2025)"},
+            {"name": "score", "type": "number", "required": false, "description": "ציון 1-5"},
+            {"name": "goals", "type": "string", "required": false, "description": "יעדים"},
+            {"name": "feedback", "type": "string", "required": false, "description": "משוב מנהל"}
+          ]
+        }
+      ],
+      "workflows": [
+        {
+          "id": "wf_recruitment",
+          "name": "גיוס עובד",
+          "steps": [
+            "פתיחת משרה על ידי מנהל",
+            "אישור HR ופרסום",
+            "קבלת קורות חיים",
+            "סינון וראיונות",
+            "בחירת מועמד ומשלוח הצעה",
+            "קליטה ואונבורדינג"
+          ],
+          "constraints": [
+            "משרה דורשת אישור תקציב לפני פרסום",
+            "לפחות 2 ראיונות לפני החלטה"
+          ]
+        },
+        {
+          "id": "wf_leave_request",
+          "name": "אישור בקשת חופשה",
+          "steps": [
+            "עובד מגיש בקשת חופשה",
+            "מנהל ישיר מקבל התראה",
+            "מנהל מאשר או דוחה",
+            "עובד מקבל הודעה",
+            "יתרת ימי חופשה מתעדכנת"
+          ],
+          "constraints": [
+            "חופשה שנתית: 18 ימים בשנה",
+            "בקשה עד 48 שעות ממועד החופשה"
+          ]
+        }
+      ],
+      "spec_document": {
+        "sections": [
+          {
+            "id": "section_overview",
+            "title": "סקירה כללית",
+            "content": "מערכת HRM לניהול כל מחזור חיי העובד — גיוס, קליטה, ביצועים וחופשות.\n- ניהול פרופיל עובד\n- גיוס וקליטה\n- חופשות ונוכחות\n- הערכות ביצועים"
+          }
+        ]
+      }
+    },
+    {
+      "id": "logistics",
+      "name": "ניהול לוגיסטיקה",
+      "domain": "Logistics",
+      "description": "מעקב משלוחים, ניהול נהגים, רכבים ומסלולים",
+      "entities": [
+        {
+          "id": "ent_shipment",
+          "name": "משלוח",
+          "fields": [
+            {"name": "tracking_number", "type": "string", "required": true, "description": "מספר מעקב"},
+            {"name": "origin", "type": "string", "required": true, "description": "כתובת מקור"},
+            {"name": "destination", "type": "string", "required": true, "description": "כתובת יעד"},
+            {"name": "status", "type": "enum", "required": true, "description": "ממתין / בדרך / נמסר / כשל"},
+            {"name": "weight", "type": "number", "required": false, "description": "משקל ק\"ג"},
+            {"name": "eta", "type": "date", "required": false, "description": "זמן הגעה משוער"}
+          ]
+        },
+        {
+          "id": "ent_driver",
+          "name": "נהג",
+          "fields": [
+            {"name": "name", "type": "string", "required": true, "description": "שם מלא"},
+            {"name": "license", "type": "string", "required": true, "description": "מספר רישיון"},
+            {"name": "phone", "type": "string", "required": true, "description": "טלפון"},
+            {"name": "status", "type": "enum", "required": true, "description": "פנוי / בנסיעה / לא זמין"}
+          ]
+        },
+        {
+          "id": "ent_vehicle",
+          "name": "רכב",
+          "fields": [
+            {"name": "plate", "type": "string", "required": true, "description": "מספר לוחית"},
+            {"name": "type", "type": "enum", "required": true, "description": "אופנוע / רכב / משאית"},
+            {"name": "capacity", "type": "number", "required": true, "description": "קיבולת ק\"ג"},
+            {"name": "status", "type": "enum", "required": true, "description": "זמין / בשימוש / תחזוקה"}
+          ]
+        },
+        {
+          "id": "ent_route",
+          "name": "מסלול",
+          "fields": [
+            {"name": "driver_id", "type": "string", "required": true, "description": "מזהה נהג"},
+            {"name": "vehicle_id", "type": "string", "required": true, "description": "מזהה רכב"},
+            {"name": "stops", "type": "string", "required": true, "description": "עצירות במסלול"},
+            {"name": "date", "type": "date", "required": true, "description": "תאריך ביצוע"},
+            {"name": "status", "type": "enum", "required": true, "description": "מתוכנן / פעיל / הושלם"}
+          ]
+        }
+      ],
+      "workflows": [
+        {
+          "id": "wf_delivery",
+          "name": "תהליך משלוח",
+          "steps": [
+            "הזמנת משלוח נכנסת",
+            "שיבוץ נהג ורכב",
+            "יצירת מסלול אופטימלי",
+            "נהג מאשר קבלת המשימה",
+            "איסוף מהמקור",
+            "מסירה ללקוח",
+            "אישור מסירה ועדכון סטטוס"
+          ],
+          "constraints": [
+            "משקל לא יעלה על קיבולת הרכב",
+            "נהג לא יעבוד מעל 10 שעות ביום"
+          ]
+        },
+        {
+          "id": "wf_tracking",
+          "name": "מעקב בזמן אמת",
+          "steps": [
+            "אפליקציית נהג שולחת מיקום כל 2 דקות",
+            "לקוח מקבל עדכון SMS בנקודות מפתח",
+            "מנהל רואה כל הרכבים בזמן אמת",
+            "חריגה מהמסלול מייצרת התראה"
+          ],
+          "constraints": [
+            "עדכון מיקום דורש GPS פעיל",
+            "אחסון נתוני מיקום ל-30 יום"
+          ]
+        }
+      ],
+      "spec_document": {
+        "sections": [
+          {
+            "id": "section_overview",
+            "title": "סקירה כללית",
+            "content": "מערכת לוגיסטיקה לניהול צי רכבים, נהגים, מסלולים ומשלוחים.\n- מעקב GPS בזמן אמת\n- ניהול צי רכבים ונהגים\n- אופטימיזציה של מסלולים\n- התראות ודיווחים"
+          }
+        ]
+      }
+    }
+  ]
+}
